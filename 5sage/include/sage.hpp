@@ -2,8 +2,6 @@
 
 #include <string>
 
-class Table;
-
 class Sage
 {
 private:
@@ -19,5 +17,4 @@ public:
 	Sage() = default;
 	//name, target chopsticks
 	Sage(std::string n, int sL, int sR);
-	Sage(const Sage& s);
 };

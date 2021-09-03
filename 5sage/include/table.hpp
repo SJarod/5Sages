@@ -1,6 +1,6 @@
 #pragma once
 
-#define SAGECOUNT 100
+#define SAGECOUNT 5
 
 #include "sage.hpp"
 
