@@ -90,6 +90,13 @@ void UI::display()
 
 		//erasing lines
 		if (!finished)
-			std::cout << "\r\x1b[A\r\x1b[A\r\x1b[A\r\x1b[A\r\x1b[A" << std::endl;
+		{
+			//number of std::endl
+			for (int i = 0; i < 5; ++i)
+			{
+				std::cout << "\r\x1b[A";	//erasing line then set cursor on upper line
+			}
+			std::cout << std::endl;
+		}
 	}
 }
