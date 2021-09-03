@@ -20,79 +20,15 @@ Table::Table()
 	ui = UI(SAGECOUNT);
 }
 
-void Table::think(Sage* sage, int t1, int t2)
-{
-	auto start = std::chrono::steady_clock::now();
-
-	//coutMutex.lock();
-	//	std::cout << sage->name << " is thinking during " << t1 << "s" << std::endl;
-	//coutMutex.unlock();
-	ui.changeSage(sage->stickL, 'T');
-
-	std::this_thread::sleep_for(std::chrono::seconds(t1));
-
-	auto end = std::chrono::steady_clock::now();
-	sage->tinkingTime += std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.f;
-
-	//coutMutex.lock();
-	//	std::cout << std::endl << sage->name << " wants to eat" << std::endl;
-	//coutMutex.unlock();
-
-	eat(sage, t2);
-}
-
 bool Table::canEat(Sage* sage)
 {
-	return false;
-}
-
-void Table::eat(Sage* sage, int t)
-{
-	auto start = std::chrono::steady_clock::now();
-
 	//try to take chopsticks
 	bool okL = chopsticksMutex[sage->stickL].try_lock();
 	bool okR = chopsticksMutex[sage->stickR].try_lock();
 
 	if (okL && okR)
 	{
-		ui.changeChopstick(sage->stickL, ++chopsticks[sage->stickL]);
-		ui.changeChopstick(sage->stickR, ++chopsticks[sage->stickR]);
-
-		ui.changeSage(sage->stickL, 'E');
-
-		//coutMutex.lock();
-		//	std::cout << sage->name << " is eating with chopsticks " << sage->stickL <<
-		//		" and " << sage->stickR << " during " << t << "s" << std::endl;
-
-		//	for (int i = 0; i < SAGECOUNT; ++i)
-		//	{
-		//		std::cout << chopsticks[i] << "  ";
-		//	}
-		//	std::cout << std::endl;
-		//coutMutex.unlock();
-
-		std::this_thread::sleep_for(std::chrono::seconds(t));
-
-		ui.changeChopstick(sage->stickL, --chopsticks[sage->stickL]);
-		ui.changeChopstick(sage->stickR, --chopsticks[sage->stickR]);
-
-		chopsticksMutex[sage->stickL].unlock();
-		chopsticksMutex[sage->stickR].unlock();
-
-		auto end = std::chrono::steady_clock::now();
-		sage->eatingTime += std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.f;
-
-		if (sage->eatingTime <= EATINGTIME)
-			think(sage, rangeRNG(ACTIONTIMEMIN, ACTIONTIMEMAX), rangeRNG(ACTIONTIMEMIN, ACTIONTIMEMAX));
-		else
-		{
-			//coutMutex.lock();
-			//	std::cout << sage->name << " is done eating -------------------------------------" << std::endl;
-			//coutMutex.unlock();
-
-			ui.changeSage(sage->stickL, 'D');
-		}
+		return true;
 	}
 	else //not having both chopsticks
 	{
@@ -119,12 +55,84 @@ void Table::eat(Sage* sage, int t)
 		//	std::cout << msg << std::endl;
 		//coutMutex.unlock();
 
-		std::this_thread::sleep_for(std::chrono::seconds(1));
+		//std::this_thread::sleep_for(std::chrono::seconds(1));
 
-		auto end = std::chrono::steady_clock::now();
-		sage->waitingTime += std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.f;
+		return false;
+	}
+}
 
-		eat(sage, t);
+void Table::think(Sage* sage, int t1, int t2)
+{
+	auto start = std::chrono::steady_clock::now();
+
+	//coutMutex.lock();
+	//	std::cout << sage->name << " is thinking during " << t1 << "s" << std::endl;
+	//coutMutex.unlock();
+	ui.changeSage(sage->stickL, 'T');
+
+	std::this_thread::sleep_for(std::chrono::seconds(t1));
+
+	auto end = std::chrono::steady_clock::now();
+	sage->tinkingTime += std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.f;
+
+	//coutMutex.lock();
+	//	std::cout << std::endl << sage->name << " wants to eat" << std::endl;
+	//coutMutex.unlock();
+
+	auto startWaiting = std::chrono::steady_clock::now();
+
+	bool ok = false;
+	while (!ok)
+	{
+		ok = canEat(sage);
+	}
+
+	auto endWaiting = std::chrono::steady_clock::now();
+	sage->waitingTime += std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.f;
+
+	eat(sage, t2);
+}
+
+void Table::eat(Sage* sage, int t)
+{
+	auto start = std::chrono::steady_clock::now();
+
+	ui.changeChopstick(sage->stickL, ++chopsticks[sage->stickL]);
+	ui.changeChopstick(sage->stickR, ++chopsticks[sage->stickR]);
+
+	ui.changeSage(sage->stickL, 'E');
+
+	//coutMutex.lock();
+	//	std::cout << sage->name << " is eating with chopsticks " << sage->stickL <<
+	//		" and " << sage->stickR << " during " << t << "s" << std::endl;
+
+	//	for (int i = 0; i < SAGECOUNT; ++i)
+	//	{
+	//		std::cout << chopsticks[i] << "  ";
+	//	}
+	//	std::cout << std::endl;
+	//coutMutex.unlock();
+
+	std::this_thread::sleep_for(std::chrono::seconds(t));
+
+	ui.changeChopstick(sage->stickL, --chopsticks[sage->stickL]);
+	ui.changeChopstick(sage->stickR, --chopsticks[sage->stickR]);
+
+	chopsticksMutex[sage->stickL].unlock();
+	chopsticksMutex[sage->stickR].unlock();
+
+	auto end = std::chrono::steady_clock::now();
+	sage->eatingTime += std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.f;
+
+	if (sage->eatingTime <= EATINGTIME)
+		think(sage, rangeRNG(ACTIONTIMEMIN, ACTIONTIMEMAX), rangeRNG(ACTIONTIMEMIN, ACTIONTIMEMAX));
+	else
+	{
+		//coutMutex.lock();
+		//	std::cout << sage->name << " is done eating -------------------------------------" << std::endl;
+		//coutMutex.unlock();
+
+		ui.changeSage(sage->stickL, 'D');
 	}
 }
 

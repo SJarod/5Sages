@@ -3,11 +3,11 @@
 #define SAGECOUNT 5
 
 //eating target time
-#define EATINGTIME 20.f
+#define EATINGTIME 5.f
 
 //action time
-#define ACTIONTIMEMIN 10
-#define ACTIONTIMEMAX 11
+#define ACTIONTIMEMIN 2
+#define ACTIONTIMEMAX 5
 
 #include "sage.hpp"
 
@@ -30,9 +30,9 @@ public:
 
 	Table();
 
+	bool canEat(Sage* sage);
 	//t1 : think time, t2 : eat time
 	void think(Sage* sage, int t1, int t2);
-	bool canEat(Sage* sage);
 	//t : eat time
 	void eat(Sage* sage, int t);
 
