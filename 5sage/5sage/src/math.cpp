@@ -4,5 +4,5 @@
 
 int Math::rangeRNG(const int min, const int max)
 {
-    return rand() % (max - min + 1) + min;
+	return rand() % (max - min + 1) + min;
 }
