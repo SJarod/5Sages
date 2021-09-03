@@ -14,7 +14,8 @@ Table::Table()
 	for (int i = 0; i < SAGECOUNT; ++i)
 	{
 		chopsticks[i] = 0;
-		sages[i] = Sage("Sage" + std::to_string(i), i, (i + 1) % SAGECOUNT);
+		sages[i] = Sage("Sage" + std::to_string(i), i, (i + 1) % SAGECOUNT,
+			rangeRNG(ACTIONTIMEMIN, ACTIONTIMEMAX), rangeRNG(ACTIONTIMEMIN, ACTIONTIMEMAX));
 	}
 
 	ui = UI(SAGECOUNT);
@@ -61,7 +62,7 @@ bool Table::canEat(Sage* sage)
 	}
 }
 
-void Table::think(Sage* sage, int t1, int t2)
+void Table::think(Sage* sage)
 {
 	auto start = std::chrono::steady_clock::now();
 
@@ -70,7 +71,7 @@ void Table::think(Sage* sage, int t1, int t2)
 	//coutMutex.unlock();
 	ui.changeSage(sage->stickL, 'T');
 
-	std::this_thread::sleep_for(std::chrono::seconds(t1));
+	std::this_thread::sleep_for(std::chrono::seconds(sage->thinkRythm));
 
 	auto end = std::chrono::steady_clock::now();
 	sage->tinkingTime += std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.f;
@@ -90,10 +91,10 @@ void Table::think(Sage* sage, int t1, int t2)
 	auto endWaiting = std::chrono::steady_clock::now();
 	sage->waitingTime += std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.f;
 
-	eat(sage, t2);
+	eat(sage);
 }
 
-void Table::eat(Sage* sage, int t)
+void Table::eat(Sage* sage)
 {
 	auto start = std::chrono::steady_clock::now();
 
@@ -113,7 +114,7 @@ void Table::eat(Sage* sage, int t)
 	//	std::cout << std::endl;
 	//coutMutex.unlock();
 
-	std::this_thread::sleep_for(std::chrono::seconds(t));
+	std::this_thread::sleep_for(std::chrono::seconds(sage->eatRythm));
 
 	ui.changeChopstick(sage->stickL, --chopsticks[sage->stickL]);
 	ui.changeChopstick(sage->stickR, --chopsticks[sage->stickR]);
@@ -125,7 +126,7 @@ void Table::eat(Sage* sage, int t)
 	sage->eatingTime += std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.f;
 
 	if (sage->eatingTime <= EATINGTIME)
-		think(sage, rangeRNG(ACTIONTIMEMIN, ACTIONTIMEMAX), rangeRNG(ACTIONTIMEMIN, ACTIONTIMEMAX));
+		think(sage);
 	else
 	{
 		//coutMutex.lock();
@@ -138,14 +139,9 @@ void Table::eat(Sage* sage, int t)
 
 void Table::dinner()
 {
-	//rand between 1 and 3
-	int r[SAGECOUNT * 2];
-	for (int i = 0; i < SAGECOUNT * 2; ++i)
-		r[i] = rangeRNG(ACTIONTIMEMIN, ACTIONTIMEMAX);
-
 	//launching threads
 	for (int i = 0; i < SAGECOUNT; ++i)
-		threads[i] = std::thread{ std::bind(&Table::think, this, &this->sages[i], r[i], r[i + SAGECOUNT]) };
+		threads[i] = std::thread{ std::bind(&Table::think, this, &this->sages[i]) };
 
 	threads[SAGECOUNT] = std::thread{ std::bind(&UI::display, &this->ui) };
 

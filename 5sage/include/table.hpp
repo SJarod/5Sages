@@ -32,9 +32,9 @@ public:
 
 	bool canEat(Sage* sage);
 	//t1 : think time, t2 : eat time
-	void think(Sage* sage, int t1, int t2);
+	void think(Sage* sage);
 	//t : eat time
-	void eat(Sage* sage, int t);
+	void eat(Sage* sage);
 
 	void dinner();
 };
