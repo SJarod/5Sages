@@ -7,6 +7,7 @@ class Sage
 private:
 
 public:
+	//sage's index is the same as sage's left stick
 	std::string	name = "";
 
 	float		tinkingTime = 0.f;
