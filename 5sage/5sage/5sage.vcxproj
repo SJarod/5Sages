@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ui.cpp" />
     <ClCompile Include="src\math.cpp" />
     <ClCompile Include="src\table.cpp" />
     <ClCompile Include="src\sage.cpp" />
@@ -152,6 +153,7 @@
     <ClInclude Include="include\math.hpp" />
     <ClInclude Include="include\sage.hpp" />
     <ClInclude Include="include\table.hpp" />
+    <ClInclude Include="include\ui.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
