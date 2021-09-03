@@ -10,7 +10,9 @@ private:
 
 public:
 	std::string	name = "";
+	float		tinkingTime = 0.f;
 	float		eatingTime = 0.f;
+	float		waitingTime = 0.f;
 	//target chopsticks
 	int			stickL = 0, stickR = 0;
 
