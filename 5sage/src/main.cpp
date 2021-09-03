@@ -13,7 +13,9 @@ int main()
 {
 	srand(time(NULL));
 
+#ifdef DEBUG
 	std::cout << "number of threads : " << std::thread::hardware_concurrency() << std::endl << std::endl;
+#endif
 
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -29,10 +31,9 @@ int main()
 	SetConsoleTextAttribute(hConsole, 15);	std::cout << "D";
 	SetConsoleTextAttribute(hConsole, 15);
 	std::cout << " : done" << std::endl << std::endl;
-	SetConsoleTextAttribute(hConsole, 12);	std::cout << "0";
+	std::cout << "0 : chopstick available" << std::endl;
+	SetConsoleTextAttribute(hConsole, 12);	std::cout << "1";
 	SetConsoleTextAttribute(hConsole, 15);
-	std::cout << " : chopstick available" << std::endl;
-	SetConsoleTextAttribute(hConsole, 15);	std::cout << "1";
 	std::cout << " : chopstick unavailable" << std::endl;
 
 	Table table;

@@ -9,6 +9,8 @@
 #define ACTIONTIMEMIN 2
 #define ACTIONTIMEMAX 5
 
+//#define DEBUG
+
 #include "sage.hpp"
 
 #include <mutex>
