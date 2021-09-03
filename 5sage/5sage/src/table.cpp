@@ -12,9 +12,7 @@ Table::Table()
 	for (int i = 0; i < SAGECOUNT; ++i)
 	{
 		chopsticks[i] = 0;
-
-		Sage t("Sage" + std::to_string(i), i, (i + 1) % SAGECOUNT);
-		sages[i] = t;
+		sages[i] = Sage("Sage" + std::to_string(i), i, (i + 1) % SAGECOUNT);
 	}
 }
 
@@ -32,7 +30,7 @@ void Table::think(Sage* sage, int t1, int t2)
 	sage->tinkingTime += std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.f;
 
 	coutMutex.lock();
-		std::cout << sage->name << " wants to eat" << std::endl;
+		std::cout << std::endl << sage->name << " wants to eat" << std::endl;
 	coutMutex.unlock();
 
 	eat(sage, t2);
@@ -52,14 +50,14 @@ void Table::eat(Sage* sage, int t)
 		chopsticks[sage->stickR] += 1;
 
 		coutMutex.lock();
-		std::cout << std::endl << sage->name << " is eating with chopsticks " << sage->stickL <<
-			" and " << sage->stickR << " during " << t << "s" << std::endl;
+			std::cout << sage->name << " is eating with chopsticks " << sage->stickL <<
+				" and " << sage->stickR << " during " << t << "s" << std::endl;
 
-		for (int i = 0; i < SAGECOUNT; ++i)
-		{
-			std::cout << chopsticks[i] << "  ";
-		}
-		std::cout << std::endl;
+			for (int i = 0; i < SAGECOUNT; ++i)
+			{
+				std::cout << chopsticks[i] << "  ";
+			}
+			std::cout << std::endl;
 		coutMutex.unlock();
 
 		std::this_thread::sleep_for(std::chrono::seconds(t));
@@ -75,12 +73,28 @@ void Table::eat(Sage* sage, int t)
 	}
 	else //not having both chopsticks
 	{
-		if (okL)
-			chopsticksMutex[sage->stickL].unlock();
-		if (okR)
-			chopsticksMutex[sage->stickR].unlock();
+		std::string msg = sage->name + " is waiting 1s for chopsticks";
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+		if (okL)		//left chopstick is available
+		{
+			chopsticksMutex[sage->stickL].unlock();
+			msg += "\b " + std::to_string(sage->stickR);
+		}
+		if (okR)		//right chopstick is available
+		{
+			chopsticksMutex[sage->stickR].unlock();
+			msg += "\b " + std::to_string(sage->stickL);
+		}
+		else if (!okL)	//both chopsticks are not available
+		{
+			msg += " " + std::to_string(sage->stickL) + " and " + std::to_string(sage->stickR);
+		}
+
+		coutMutex.lock();
+			std::cout << msg << std::endl;
+		coutMutex.unlock();
+
+		std::this_thread::sleep_for(std::chrono::seconds(1));
 
 		auto end = std::chrono::steady_clock::now();
 		sage->waitingTime += std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.f;
