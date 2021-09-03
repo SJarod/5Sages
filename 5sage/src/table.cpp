@@ -7,6 +7,8 @@
 
 #include <chrono>
 
+#include "math.hpp"
+
 Table::Table()
 {
 	for (int i = 0; i < SAGECOUNT; ++i)
@@ -70,6 +72,15 @@ void Table::eat(Sage* sage, int t)
 
 		auto end = std::chrono::steady_clock::now();
 		sage->eatingTime += std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.f;
+
+		if (sage->eatingTime <= EATINGTIME)
+			think(sage, rangeRNG(ACTIONTIMEMIN, ACTIONTIMEMAX), rangeRNG(ACTIONTIMEMIN, ACTIONTIMEMAX));
+		else
+		{
+			coutMutex.lock();
+				std::cout << sage->name << " is done eating -------------------------------------" << std::endl;
+			coutMutex.unlock();
+		}
 	}
 	else //not having both chopsticks
 	{
@@ -108,7 +119,7 @@ void Table::dinner()
 	//rand between 1 and 3
 	int r[SAGECOUNT * 2];
 	for (int i = 0; i < SAGECOUNT * 2; ++i)
-		r[i] = rand() % 3 + 1;
+		r[i] = rangeRNG(ACTIONTIMEMIN, ACTIONTIMEMAX);
 
 	for (int i = 0; i < SAGECOUNT; ++i)
 		threads[i] = std::thread{ std::bind(&Table::think, this, &this->sages[i], r[i], r[i + SAGECOUNT]) };
