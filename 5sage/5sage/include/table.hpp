@@ -3,11 +3,11 @@
 #define SAGECOUNT 5
 
 //eating target time
-#define EATINGTIME 5.f
+#define EATINGTIME 5
 
 //action time
-#define ACTIONTIMEMIN 2
-#define ACTIONTIMEMAX 5
+#define ACTIONTIMEMIN 1
+#define ACTIONTIMEMAX 3
 
 //#define DEBUG
 
@@ -32,11 +32,12 @@ public:
 
 	Table();
 
-	bool canEat(Sage* sage);
-	//t1 : think time, t2 : eat time
 	void think(Sage* sage);
-	//t : eat time
+
+	bool canEat(Sage* sage);
 	void eat(Sage* sage);
+
+	void doneEating(Sage* sage);
 
 	void dinner();
 };
