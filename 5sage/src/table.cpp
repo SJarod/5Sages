@@ -21,49 +21,6 @@ Table::Table()
 	ui = UI(SAGECOUNT);
 }
 
-bool Table::canEat(Sage* sage)
-{
-	//try to take chopsticks
-	bool okL = chopsticksMutex[sage->stickL].try_lock();
-	bool okR = chopsticksMutex[sage->stickR].try_lock();
-
-	if (okL && okR)
-	{
-		return true;
-	}
-	else //not having both chopsticks
-	{
-		std::string msg = sage->name + " is waiting for chopsticks";
-
-		if (okL)		//left chopstick is available
-		{
-			chopsticksMutex[sage->stickL].unlock();
-			msg += "\b " + std::to_string(sage->stickR);
-		}
-		if (okR)		//right chopstick is available
-		{
-			chopsticksMutex[sage->stickR].unlock();
-			msg += "\b " + std::to_string(sage->stickL);
-		}
-		else if (!okL)	//both chopsticks are not available
-		{
-			msg += " " + std::to_string(sage->stickL) + " and " + std::to_string(sage->stickR);
-		}
-
-		ui.changeSage(sage->stickL, 'W');
-
-#ifdef DEBUG
-		coutMutex.lock();
-			std::cout << msg << std::endl;
-		coutMutex.unlock();
-
-		std::this_thread::sleep_for(std::chrono::seconds(1));
-#endif
-
-		return false;
-	}
-}
-
 void Table::think(Sage* sage)
 {
 	auto start = std::chrono::steady_clock::now();
@@ -101,6 +58,49 @@ void Table::think(Sage* sage)
 	eat(sage);
 }
 
+bool Table::canEat(Sage* sage)
+{
+	//try to take chopsticks
+	bool okL = chopsticksMutex[sage->stickL].try_lock();
+	bool okR = chopsticksMutex[sage->stickR].try_lock();
+
+	if (okL && okR)
+	{
+		return true;
+	}
+	else //not having both chopsticks
+	{
+		std::string msg = sage->name + " is waiting for chopsticks";
+
+		if (okL)		//left chopstick is available
+		{
+			chopsticksMutex[sage->stickL].unlock();
+			msg += "\b " + std::to_string(sage->stickR);
+		}
+		if (okR)		//right chopstick is available
+		{
+			chopsticksMutex[sage->stickR].unlock();
+			msg += "\b " + std::to_string(sage->stickL);
+		}
+		else if (!okL)	//both chopsticks are not available
+		{
+			msg += " " + std::to_string(sage->stickL) + " and " + std::to_string(sage->stickR);
+		}
+
+		ui.changeSage(sage->stickL, 'W');
+
+#ifdef DEBUG
+		coutMutex.lock();
+		std::cout << msg << std::endl;
+		coutMutex.unlock();
+
+		std::this_thread::sleep_for(std::chrono::seconds(1));
+#endif
+
+		return false;
+	}
+}
+
 void Table::eat(Sage* sage)
 {
 	auto start = std::chrono::steady_clock::now();
@@ -134,13 +134,24 @@ void Table::eat(Sage* sage)
 	auto end = std::chrono::steady_clock::now();
 	sage->eatingTime += std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.f;
 
+	doneEating(sage);
+}
+
+void Table::doneEating(Sage* sage)
+{
 	if (sage->eatingTime <= EATINGTIME)
+	{
+		//cannot eat more than the eating target time
+		if ((int)sage->eatingTime + (int)sage->eatRythm > EATINGTIME)
+			sage->eatRythm = (int)EATINGTIME - (int)sage->eatingTime;
+
 		think(sage);
+	}
 	else
 	{
 #ifdef DEBUG
 		coutMutex.lock();
-			std::cout << sage->name << " is done eating -------------------------------------" << std::endl;
+		std::cout << sage->name << " is done eating -------------------------------------" << std::endl;
 		coutMutex.unlock();
 #endif
 
@@ -150,23 +161,23 @@ void Table::eat(Sage* sage)
 
 void Table::dinner()
 {
-	//launching threads
+	//launching threads for sages
 	for (int i = 0; i < SAGECOUNT; ++i)
 		threads[i] = std::thread{ std::bind(&Table::think, this, &this->sages[i]) };
 
+	//launching thread for ui (only if not in debug mode)
 #ifndef DEBUG
 	threads[SAGECOUNT] = std::thread{ std::bind(&UI::display, &this->ui) };
 #endif
 
-	bool debug = false;
+	//joining threads
 #ifdef DEBUG
-	debug = false;
-#else
-	debug = true;
-#endif
-
-	for (int i = 0; i < SAGECOUNT + debug; ++i)	//+1 for the ui
+	for (int i = 0; i < SAGECOUNT; ++i)
 		threads[i].join();
+#else
+	for (int i = 0; i < SAGECOUNT + 1; ++i)	//+1 for the ui
+		threads[i].join();
+#endif
 
 	for (int i = 0; i < SAGECOUNT; ++i)
 	{
