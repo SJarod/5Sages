@@ -7,18 +7,23 @@
 
 #include <thread>
 
-#include <Windows.h>
+//leak check
+#include <stdlib.h>
+#include <crtdbg.h>
 
 int main()
 {
-	srand(time(NULL));
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
+	srand((unsigned int)time(NULL));
 
 #ifdef DEBUG
 	std::cout << "number of threads : " << std::thread::hardware_concurrency() << std::endl << std::endl;
 #endif
 
 	Table table;
-	table.dinner();
+	table.setTable();
+	table.readyToEat();
 
 	return 0;
 }

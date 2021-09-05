@@ -2,8 +2,6 @@
 
 #include <iostream>
 
-#include <Windows.h>
-
 UI::UI(int sageCount)
 {
 	for (int i = 0; i < sageCount; ++i)
@@ -34,70 +32,33 @@ void UI::display()
 	SetConsoleCursorInfo(hConsole, &cInfo);
 
 	SetConsoleTextAttribute(hConsole, 9);	std::cout << "T";
-	SetConsoleTextAttribute(hConsole, 15);
+	SetConsoleTextAttribute(hConsole, 7);
 	std::cout << " : thinking" << std::endl;
 	SetConsoleTextAttribute(hConsole, 12);	std::cout << "E";
-	SetConsoleTextAttribute(hConsole, 15);
+	SetConsoleTextAttribute(hConsole, 7);
 	std::cout << " : eating" << std::endl;
 	SetConsoleTextAttribute(hConsole, 10);	std::cout << "W";
-	SetConsoleTextAttribute(hConsole, 15);
+	SetConsoleTextAttribute(hConsole, 7);
 	std::cout << " : waiting" << std::endl;
 	SetConsoleTextAttribute(hConsole, 15);	std::cout << "D";
-	SetConsoleTextAttribute(hConsole, 15);
+	SetConsoleTextAttribute(hConsole, 7);
 	std::cout << " : done" << std::endl << std::endl;
-	std::cout << "0 : chopstick available" << std::endl;
+	SetConsoleTextAttribute(hConsole, 15);	std::cout << "0";
+	SetConsoleTextAttribute(hConsole, 7);
+	std::cout << " : chopstick available" << std::endl;
 	SetConsoleTextAttribute(hConsole, 12);	std::cout << "1";
-	SetConsoleTextAttribute(hConsole, 15);
+	SetConsoleTextAttribute(hConsole, 7);
 	std::cout << " : chopstick unavailable" << std::endl;
 
 	while (!finished)
 	{
 		std::cout << std::endl << "  ";
 
-		//display sages's state
-		for (char c : sageState)
-		{
-			if (c == 'E')
-				SetConsoleTextAttribute(hConsole, 12);
-			else if (c == 'W')
-				SetConsoleTextAttribute(hConsole, 10);
-			else if (c == 'T')
-				SetConsoleTextAttribute(hConsole, 9);
-
-			std::cout << c << "  ";
-			SetConsoleTextAttribute(hConsole, 15);
-		}
+		displaySageState(hConsole);
 
 		std::cout << std::endl;
 
-		//display chopsticks's state
-		if (sageState[sageState.size() - 1] == 'E')
-		{
-			std::cout << "   ";
-			for (int i = 1; i < chopstickState.size(); ++i)
-			{
-				if (chopstickState[i] == 1)
-					SetConsoleTextAttribute(hConsole, 12);
-
-				std::cout << chopstickState[i] << "  ";
-				SetConsoleTextAttribute(hConsole, 15);
-			}
-			SetConsoleTextAttribute(hConsole, 12);
-			std::cout << chopstickState[chopstickState.size() - 1];
-			SetConsoleTextAttribute(hConsole, 15);
-		}
-		else
-		{
-			for (int i : chopstickState)
-			{
-				if (i == 1)
-					SetConsoleTextAttribute(hConsole, 12);
-
-				std::cout << i << "  ";
-				SetConsoleTextAttribute(hConsole, 15);
-			}
-			std::cout << "   ";
-		}
+		displayChopstickState(hConsole);
 
 		std::cout << std::endl << std::endl;
 
@@ -111,15 +72,82 @@ void UI::display()
 			}
 		}
 
-		//erasing lines
-		if (!finished)
+		eraseLines();
+	}
+}
+
+void UI::displaySageState(HANDLE hConsole)
+{
+	//display sages's state
+	for (char c : sageState)
+	{
+		switch (c)
 		{
-			//number of std::endl
-			for (int i = 0; i < 5; ++i)
-			{
-				std::cout << "\r\x1b[A";	//erasing line then set cursor on upper line
-			}
-			std::cout << std::endl;
+		case 'E':
+			SetConsoleTextAttribute(hConsole, 12);
+			break;
+		case 'W':
+			SetConsoleTextAttribute(hConsole, 10);
+			break;
+		case 'T':
+			SetConsoleTextAttribute(hConsole, 9);
+			break;
+		case 'D':
+			SetConsoleTextAttribute(hConsole, 15);
+			break;
 		}
+
+		std::cout << c << "  ";
+		SetConsoleTextAttribute(hConsole, 7);
+	}
+}
+
+void UI::displayChopstickState(HANDLE hConsole)
+{
+	//display chopsticks's state
+	if (sageState[sageState.size() - 1] == 'E')
+	{
+		std::cout << "   ";
+		for (int i = 1; i < chopstickState.size(); ++i)
+		{
+			if (chopstickState[i] == 1)
+				SetConsoleTextAttribute(hConsole, 12);
+			else
+				SetConsoleTextAttribute(hConsole, 15);
+
+			std::cout << chopstickState[i] << "  ";
+			SetConsoleTextAttribute(hConsole, 7);
+		}
+		SetConsoleTextAttribute(hConsole, 12);
+		std::cout << chopstickState[chopstickState.size() - 1];
+		SetConsoleTextAttribute(hConsole, 7);
+	}
+	else
+	{
+		for (int i : chopstickState)
+		{
+			if (i == 1)
+				SetConsoleTextAttribute(hConsole, 12);
+			else
+				SetConsoleTextAttribute(hConsole, 15);
+
+			std::cout << i << "  ";
+			SetConsoleTextAttribute(hConsole, 7);
+		}
+		std::cout << "   ";
+	}
+}
+
+void UI::eraseLines()
+{
+	//erasing lines
+	if (!finished)
+	{
+		//number of std::endl
+		for (int i = 0; i < 5; ++i)
+		{
+			std::cout << "\r\x1b[A";	//erasing line then set cursor on upper line
+		}
+		std::cout << std::endl;
 	}
 }
