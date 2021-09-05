@@ -10,9 +10,9 @@ public:
 	//sage's index is the same as sage's left stick
 	std::string	name = "";
 
-	float		tinkingTime = 0.f;
-	float		eatingTime = 0.f;
-	float		waitingTime = 0.f;
+	float		tinkingTime = 0.f;	//amount of thinking
+	float		eatingTime = 0.f;	//amount of eating
+	float		waitingTime = 0.f;	//amount of waiting
 
 	int			thinkRythm = 0;
 	int			eatRythm = 0;

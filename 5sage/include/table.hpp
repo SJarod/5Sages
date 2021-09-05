@@ -1,36 +1,28 @@
 #pragma once
 
-#define SAGECOUNT 5
-
-//eating target time
-#define EATINGTIME 5
-
-//action time
-#define ACTIONTIMEMIN 1
-#define ACTIONTIMEMAX 3
-
 //#define DEBUG
 
 #include "sage.hpp"
+#include "ui.hpp"
 
 #include <mutex>
-
-#include "ui.hpp"
+#include <vector>
 
 class Table
 {
 private:
-	std::mutex	coutMutex;
-	std::mutex	chopsticksMutex[SAGECOUNT];
-	std::thread threads[SAGECOUNT + 1];	//+1 for the UI
+	unsigned int	SAGECOUNT = 5;
+	float			EATINGTIME = 5.f;					//eating target time
+	float			ACTIONTIMEMIN = 1.f;				//action time
+	float			ACTIONTIMEMAX = 3.f;
 
-	int			chopsticks[SAGECOUNT];
+	std::mutex					coutMutex;
+	std::vector<std::mutex*>	chopsticksMutex;
+	std::vector<std::thread>	threads;
 
-public:
-	Sage		sages[SAGECOUNT];
-	UI			ui;
+	std::vector<int>			chopsticks;
 
-	Table();
+	bool						canEatMore = false;		//can the sages eat more than the target time?
 
 	void think(Sage* sage);
 
@@ -40,4 +32,14 @@ public:
 	void doneEating(Sage* sage);
 
 	void dinner();
+
+public:
+	std::vector<Sage>			sages;
+	UI							ui;
+
+	Table();
+	~Table();
+
+	void setTable();
+	void readyToEat();
 };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <Windows.h>
 
 class UI
 {
@@ -18,4 +19,8 @@ public:
 	void changeChopstick(const int index, const int state);
 
 	void display();
+
+	void displaySageState(HANDLE hConsole);
+	void displayChopstickState(HANDLE hConsole);
+	void eraseLines();
 };
