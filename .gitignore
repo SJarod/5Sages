@@ -8,3 +8,7 @@
 #archives
 *.zip
 *.rar
+
+#builds
+[Bb]uild
+[Bb]uilds
