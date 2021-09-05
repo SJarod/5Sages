@@ -23,4 +23,6 @@ To use the program, follow the instructions on the console when it launches.
 	- they cannot eat more : they will always follow their eating rhythm
 
 ### Problems/Bugs
-No known bugs
+- user make a dinner with only one wise man
+- UI display does not work well on build
+- window closes automatically when program ends on build
