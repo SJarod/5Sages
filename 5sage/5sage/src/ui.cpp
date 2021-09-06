@@ -25,11 +25,7 @@ void UI::display()
 {
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
-	//make the cursor invisible
-	CONSOLE_CURSOR_INFO cInfo;
-	cInfo.dwSize = 100;
-	cInfo.bVisible = false;
-	SetConsoleCursorInfo(hConsole, &cInfo);
+	makeCursorInvisible(hConsole);
 
 	SetConsoleTextAttribute(hConsole, 9);	std::cout << "T";
 	SetConsoleTextAttribute(hConsole, 7);
@@ -49,6 +45,8 @@ void UI::display()
 	SetConsoleTextAttribute(hConsole, 12);	std::cout << "1";
 	SetConsoleTextAttribute(hConsole, 7);
 	std::cout << " : chopstick unavailable" << std::endl;
+
+	COORD startPos = getConsoleCursorPosition(hConsole);
 
 	while (!finished)
 	{
@@ -72,7 +70,7 @@ void UI::display()
 			}
 		}
 
-		eraseLines();
+		resetCursorPosition(hConsole, startPos);
 	}
 }
 
@@ -138,16 +136,26 @@ void UI::displayChopstickState(HANDLE hConsole)
 	}
 }
 
-void UI::eraseLines()
+void UI::makeCursorInvisible(HANDLE hConsole)
 {
-	//erasing lines
+	//make the cursor invisible
+	CONSOLE_CURSOR_INFO cInfo;
+	cInfo.dwSize = 100;
+	cInfo.bVisible = false;
+	SetConsoleCursorInfo(hConsole, &cInfo);
+}
+
+COORD UI::getConsoleCursorPosition(HANDLE hConsole)
+{
+	//position of the console cursor
+	CONSOLE_SCREEN_BUFFER_INFO cInfo;
+	GetConsoleScreenBufferInfo(hConsole, &cInfo);
+
+	return cInfo.dwCursorPosition;
+}
+
+void UI::resetCursorPosition(HANDLE hConsole, COORD startPos)
+{
 	if (!finished)
-	{
-		//number of std::endl
-		for (int i = 0; i < 5; ++i)
-		{
-			std::cout << "\r\x1b[A";	//erasing line then set cursor on upper line
-		}
-		std::cout << std::endl;
-	}
+		SetConsoleCursorPosition(hConsole, startPos);	//place the cursor on starting line
 }

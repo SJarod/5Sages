@@ -72,13 +72,13 @@ void Table::think(Sage* sage)
 
 #ifdef DEBUG
 	coutMutex.lock();
-		std::cout << sage->name << " is thinking during " << sage->thinkRythm << "s" << std::endl;
+		std::cout << sage->name << " is thinking during " << sage->thinkSpeed << "s" << std::endl;
 	coutMutex.unlock();
 #endif
 
 	ui.changeSage(sage->stickL, 'T');
 
-	std::this_thread::sleep_for(std::chrono::seconds(sage->thinkRythm));
+	std::this_thread::sleep_for(std::chrono::seconds(sage->thinkSpeed));
 
 	auto end = std::chrono::steady_clock::now();
 	sage->tinkingTime += std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.f;
@@ -158,7 +158,7 @@ void Table::eat(Sage* sage)
 #ifdef DEBUG
 	coutMutex.lock();
 		std::cout << sage->name << " is eating with chopsticks " << sage->stickL <<
-			" and " << sage->stickR << " during " << sage->eatRythm << "s" << std::endl;
+			" and " << sage->stickR << " during " << sage->eatSpeed << "s" << std::endl;
 
 		for (unsigned int i = 0; i < SAGECOUNT; ++i)
 		{
@@ -168,7 +168,7 @@ void Table::eat(Sage* sage)
 	coutMutex.unlock();
 #endif
 
-	std::this_thread::sleep_for(std::chrono::seconds(sage->eatRythm));
+	std::this_thread::sleep_for(std::chrono::seconds(sage->eatSpeed));
 
 	ui.changeChopstick(sage->stickL, --chopsticks[sage->stickL]);
 	ui.changeChopstick(sage->stickR, --chopsticks[sage->stickR]);
@@ -189,8 +189,8 @@ void Table::doneEating(Sage* sage)
 		if (!canEatMore)
 		{
 			//cannot eat more than the eating target time
-			if ((int)sage->eatingTime + sage->eatRythm > (int)EATINGTIME)
-				sage->eatRythm = (int)EATINGTIME - (int)sage->eatingTime;
+			if ((int)sage->eatingTime + sage->eatSpeed > (int)EATINGTIME)
+				sage->eatSpeed = (int)EATINGTIME - (int)sage->eatingTime;
 		}
 
 		think(sage);
