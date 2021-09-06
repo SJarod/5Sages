@@ -12,14 +12,16 @@
 Table::Table()
 {
 	std::cout << "Combien de sages sont invites? ";
-	unsigned int i;
-	std::cin >> i;
-	if (i <= 1)
+	unsigned int count;
+	std::cin >> count;
+	if (count <= 1)
 	{
-		i = 2;
+		count = 2;
 		std::cout << "2" << std::endl;
 	}
-	SAGECOUNT = i;
+	SAGECOUNT = count;
+
+	nameSages();
 
 	std::cout << "Pendant combien de temps les sages doivent-ils manger? ";
 	std::cin >> EATINGTIME;
@@ -63,14 +65,39 @@ void Table::setTable()
 
 		threads.push_back(std::thread());
 
-		chopsticks.push_back(0);
+		int thinkT = rangeRNG((int)ACTIONTIMEMIN, (int)ACTIONTIMEMAX);
+		int eatT = rangeRNG((int)ACTIONTIMEMIN, (int)ACTIONTIMEMAX);
+		sages.push_back(Sage(names[i], i, (i + 1) % SAGECOUNT, thinkT, eatT));
 
-		sages.push_back(Sage("Sage" + std::to_string(i), i, (i + 1) % SAGECOUNT,
-			rangeRNG((int)ACTIONTIMEMIN, (int)ACTIONTIMEMAX), rangeRNG((int)ACTIONTIMEMIN, (int)ACTIONTIMEMAX)));
+		chopsticks.push_back(0);
 	}
 
 	threads.push_back(std::thread()); //+1 for the UI
 	ui = UI(SAGECOUNT);
+}
+
+void Table::nameSages()
+{
+	for (int i = 0; i < SAGECOUNT; ++i)
+	{
+		names.push_back("Sage" + std::to_string(i));
+	}
+
+	std::cout << std::endl << "\"Je n'ai plus d'inspi\" pour arreter de nommer les sages" << std::endl;
+
+	for (int i = 0; i < SAGECOUNT; ++i)
+	{
+		std::cout << "nom du " << i + 1 << "ieme sage : ";
+
+		std::string input;
+		std::getline(std::cin >> std::ws, input);
+		if (input == "Je n'ai plus d'inspi")
+			break;
+
+		names[i] = input;
+	}
+
+	std::cout << std::endl;
 }
 
 void Table::think(Sage* sage)
@@ -250,7 +277,7 @@ void Table::dinner()
 
 	for (unsigned int i = 0; i < SAGECOUNT; ++i)
 	{
-		std::cout << sages[i].name << " eating time : " << sages[i].eatingTime << "s" <<
+		std::cout << sages[i].name << "'s eating time : " << sages[i].eatingTime << "s" <<
 			", thinking time : " << sages[i].tinkingTime << "s" <<
 			", waiting time : " << sages[i].waitingTime << "s" << std::endl;;
 	}

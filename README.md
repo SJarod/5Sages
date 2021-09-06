@@ -24,9 +24,10 @@ To use the program, follow the instructions on the console when it launches.
 	- they cannot eat more : they will always follow their eating rhythm
 
 ###### Next implementation
-- user can choose wise men's name
+- timer for each thread (total duration time)
+- show the thread's start and end time
 
 ### Problems/Bugs
 - user can enter text instead of numbers in the first questions
-- window closes automatically when program ends on build
 - when there are a lot of wise men, the display will not be fast enough and accurate
+- user has to enter a character to close the window
