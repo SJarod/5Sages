@@ -27,6 +27,6 @@ To use the program, follow the instructions on the console when it launches.
 - user can choose wise men's name
 
 ### Problems/Bugs
-- user can make a dinner with only one wise man
 - user can enter text instead of numbers in the first questions
 - window closes automatically when program ends on build
+- when there are a lot of wise men, the display will not be fast enough and accurate
