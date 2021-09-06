@@ -29,31 +29,11 @@ void UI::display()
 
 	makeCursorInvisible(hConsole);
 
-	SetConsoleTextAttribute(hConsole, 9);	std::cout << "T";
-	SetConsoleTextAttribute(hConsole, 7);
-	std::cout << " : thinking" << std::endl;
-	SetConsoleTextAttribute(hConsole, 12);	std::cout << "E";
-	SetConsoleTextAttribute(hConsole, 7);
-	std::cout << " : eating" << std::endl;
-	SetConsoleTextAttribute(hConsole, 10);	std::cout << "W";
-	SetConsoleTextAttribute(hConsole, 7);
-	std::cout << " : waiting" << std::endl;
-	SetConsoleTextAttribute(hConsole, 15);	std::cout << "D";
-	SetConsoleTextAttribute(hConsole, 7);
-	std::cout << " : done" << std::endl << std::endl;
-	SetConsoleTextAttribute(hConsole, 15);	std::cout << "0";
-	SetConsoleTextAttribute(hConsole, 7);
-	std::cout << " : chopstick available" << std::endl;
-	SetConsoleTextAttribute(hConsole, 12);	std::cout << "1";
-	SetConsoleTextAttribute(hConsole, 7);
-	std::cout << " : chopstick unavailable" << std::endl;
-
 	COORD startPos = getConsoleCursorPosition(hConsole);
 	auto dinnerStart = std::chrono::steady_clock::now();
 
 	while (!finished)
 	{
-		std::cout << std::endl;
 		displayTimer(dinnerStart);
 
 		std::cout << std::endl << "  ";

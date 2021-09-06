@@ -9,9 +9,11 @@
 
 #include "math.hpp"
 
+#include <Windows.h>
+
 Table::Table()
 {
-	std::cout << "Dieu a organise un repas ou il a invite ses sages preferes" << std::endl;
+	std::cout << "Dieu a organise un repas ou il a invite ses sages preferes." << std::endl;
 	std::cout << "Combien de sages sont invites? ";
 	unsigned int count;
 	std::cin >> count;
@@ -79,14 +81,14 @@ void Table::setTable()
 
 void Table::nameSages()
 {
-	for (int i = 0; i < SAGECOUNT; ++i)
+	for (unsigned int i = 0; i < SAGECOUNT; ++i)
 	{
 		names.push_back("Sage" + std::to_string(i));
 	}
 
-	std::cout << std::endl << "Entrer \"Je n'ai plus d'inspi\" pour arreter de nommer les sages" << std::endl;
+	std::cout << std::endl << "Entrer \"Je n'ai plus d'inspi\" pour arreter de nommer les sages." << std::endl;
 
-	for (int i = 0; i < SAGECOUNT; ++i)
+	for (unsigned int i = 0; i < SAGECOUNT; ++i)
 	{
 		std::cout << "nom du " << i + 1 << "ieme sage : ";
 
@@ -245,19 +247,42 @@ void Table::doneEating(Sage* sage)
 
 void Table::readyToEat()
 {
-	std::cout << "Le dinner peut-il commencer [o/n]? ";
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
-	std::string c;
-	std::cin >> c;
-	if (c[0] == 'o' || c[0] == 'y')
-		dinner();
-	else
-		readyToEat();
+	std::cout << "Voici les regles : " << std::endl;
+	SetConsoleTextAttribute(hConsole, 9);	std::cout << "T";
+	SetConsoleTextAttribute(hConsole, 7);
+	std::cout << " : thinking" << std::endl;
+	SetConsoleTextAttribute(hConsole, 12);	std::cout << "E";
+	SetConsoleTextAttribute(hConsole, 7);
+	std::cout << " : eating" << std::endl;
+	SetConsoleTextAttribute(hConsole, 10);	std::cout << "W";
+	SetConsoleTextAttribute(hConsole, 7);
+	std::cout << " : waiting" << std::endl;
+	SetConsoleTextAttribute(hConsole, 15);	std::cout << "D";
+	SetConsoleTextAttribute(hConsole, 7);
+	std::cout << " : done" << std::endl << std::endl;
+	SetConsoleTextAttribute(hConsole, 15);	std::cout << "0";
+	SetConsoleTextAttribute(hConsole, 7);
+	std::cout << " : chopstick available" << std::endl;
+	SetConsoleTextAttribute(hConsole, 12);	std::cout << "1";
+	SetConsoleTextAttribute(hConsole, 7);
+	std::cout << " : chopstick unavailable" << std::endl << std::endl;
+
+	std::string c = " ";
+	while (!(c[0] == 'o' || c[0] == 'y'))
+	{
+		std::cout << "Le dinner peut-il commencer [o/n]? ";
+
+		std::cin >> c;
+	}
+
+	dinner();
 }
 
 void Table::dinner()
 {
-	std::cout << std::endl << "Le dinner des " << SAGECOUNT << " sages peut commencer" << std::endl << std::endl;
+	std::cout << std::endl << "Le dinner des " << SAGECOUNT << " sages peut commencer." << std::endl << std::endl;
 
 	//launching threads for sages
 	for (unsigned int i = 0; i < SAGECOUNT; ++i)
