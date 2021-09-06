@@ -6,6 +6,7 @@ The program is called 5sage. It is a console program that simulates the dinner o
 To use the program, follow the instructions on the console when it launches.
 
 ### Features
+###### Implemented
 - multithreading (for every wise men)
 - modifiable values for the dinner
 	- dinner time
@@ -22,7 +23,10 @@ To use the program, follow the instructions on the console when it launches.
 	- they can eat more : they will spend fewer time eating on their last round
 	- they cannot eat more : they will always follow their eating rhythm
 
+###### Next implementation
+- user can choose wise men's name
+
 ### Problems/Bugs
-- user make a dinner with only one wise man
-- UI display does not work well on build
+- user can make a dinner with only one wise man
+- user can enter text instead of numbers in the first questions
 - window closes automatically when program ends on build

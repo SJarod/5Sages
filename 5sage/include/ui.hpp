@@ -15,12 +15,15 @@ public:
 	UI() = default;
 	UI(int sageCount);
 
-	void changeSage(const int index, const char state);
-	void changeChopstick(const int index, const int state);
+	void	changeSage(const int index, const char state);
+	void	changeChopstick(const int index, const int state);
 
-	void display();
+	void	display();
 
-	void displaySageState(HANDLE hConsole);
-	void displayChopstickState(HANDLE hConsole);
-	void eraseLines();
+	void	displaySageState(HANDLE hConsole);
+	void	displayChopstickState(HANDLE hConsole);
+
+	void	makeCursorInvisible(HANDLE hConsole);
+	COORD	getConsoleCursorPosition(HANDLE hConsole);
+	void	resetCursorPosition(HANDLE hConsole, COORD startPos);
 };

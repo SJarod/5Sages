@@ -14,8 +14,8 @@ public:
 	float		eatingTime = 0.f;	//amount of eating
 	float		waitingTime = 0.f;	//amount of waiting
 
-	int			thinkRythm = 0;
-	int			eatRythm = 0;
+	int			thinkSpeed = 0;
+	int			eatSpeed = 0;
 
 	//target chopsticks
 	int			stickL = 0, stickR = 0;
