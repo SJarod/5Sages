@@ -12,7 +12,14 @@
 Table::Table()
 {
 	std::cout << "Combien de sages sont invites? ";
-	std::cin >> SAGECOUNT;
+	unsigned int i;
+	std::cin >> i;
+	if (i <= 1)
+	{
+		i = 2;
+		std::cout << "2" << std::endl;
+	}
+	SAGECOUNT = i;
 
 	std::cout << "Pendant combien de temps les sages doivent-ils manger? ";
 	std::cin >> EATINGTIME;
@@ -247,4 +254,8 @@ void Table::dinner()
 			", thinking time : " << sages[i].tinkingTime << "s" <<
 			", waiting time : " << sages[i].waitingTime << "s" << std::endl;;
 	}
+
+	std::cout << std::endl << "Press any to key to close the window...";
+	char c;
+	std::cin >> c;
 }
