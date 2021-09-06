@@ -11,6 +11,7 @@
 
 Table::Table()
 {
+	std::cout << "Dieu a organise un repas ou il a invite ses sages preferes" << std::endl;
 	std::cout << "Combien de sages sont invites? ";
 	unsigned int count;
 	std::cin >> count;
@@ -23,13 +24,13 @@ Table::Table()
 
 	nameSages();
 
-	std::cout << "Pendant combien de temps les sages doivent-ils manger? ";
+	std::cout << "Pendant combien de temps (en secondes) les sages doivent-ils manger? ";
 	std::cin >> EATINGTIME;
 
-	std::cout << "Pendant combien de temps les sages pensent/mangent-ils au minimum? ";
+	std::cout << "Pendant combien de temps (en secondes) les sages pensent/mangent-ils au minimum? ";
 	std::cin >> ACTIONTIMEMIN;
 
-	std::cout << "Pendant combien de temps les sages pensent/mangent-ils au maximum? ";
+	std::cout << "Pendant combien de temps (en secondes) les sages pensent/mangent-ils au maximum? ";
 	std::cin >> ACTIONTIMEMAX;
 
 	std::cout << "Les sages peuvent-ils manger plus que le temps voulu [o/n]? ";
@@ -83,7 +84,7 @@ void Table::nameSages()
 		names.push_back("Sage" + std::to_string(i));
 	}
 
-	std::cout << std::endl << "\"Je n'ai plus d'inspi\" pour arreter de nommer les sages" << std::endl;
+	std::cout << std::endl << "Entrer \"Je n'ai plus d'inspi\" pour arreter de nommer les sages" << std::endl;
 
 	for (int i = 0; i < SAGECOUNT; ++i)
 	{
@@ -184,6 +185,7 @@ void Table::eat(Sage* sage)
 {
 	auto start = std::chrono::steady_clock::now();
 
+	//chopsticks already locked in canEat()
 	ui.changeChopstick(sage->stickL, ++chopsticks[sage->stickL]);
 	ui.changeChopstick(sage->stickR, ++chopsticks[sage->stickR]);
 
@@ -282,7 +284,7 @@ void Table::dinner()
 			", waiting time : " << sages[i].waitingTime << "s" << std::endl;;
 	}
 
-	std::cout << std::endl << "Press any to key to close the window...";
+	std::cout << std::endl << "Enter any character to close the window...";
 	char c;
 	std::cin >> c;
 }
