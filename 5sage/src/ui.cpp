@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include <chrono>
+
 UI::UI(int sageCount)
 {
 	for (int i = 0; i < sageCount; ++i)
@@ -47,9 +49,13 @@ void UI::display()
 	std::cout << " : chopstick unavailable" << std::endl;
 
 	COORD startPos = getConsoleCursorPosition(hConsole);
+	auto dinnerStart = std::chrono::steady_clock::now();
 
 	while (!finished)
 	{
+		std::cout << std::endl;
+		displayTimer(dinnerStart);
+
 		std::cout << std::endl << "  ";
 
 		displaySageState(hConsole);
@@ -72,6 +78,14 @@ void UI::display()
 
 		resetCursorPosition(hConsole, startPos);
 	}
+}
+
+void UI::displayTimer(std::chrono::steady_clock::time_point dinnerStart)
+{
+	auto dinnerNow = std::chrono::steady_clock::now();
+	std::cout << "Timer : ";
+	std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(dinnerNow - dinnerStart).count() / 1000.f;
+	std::cout << "s" << std::endl;
 }
 
 void UI::displaySageState(HANDLE hConsole)

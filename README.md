@@ -22,10 +22,12 @@ To use the program, follow the instructions on the console when it launches.
 	- choose if the wise men can eat more than their dinner time
 	- they can eat more : they will spend fewer time eating on their last round
 	- they cannot eat more : they will always follow their eating rhythm
+- display of a timer to help user to count
 
 ###### Next implementation
-- timer for each thread (total duration time)
+- timer for each thread (total duration time) (each wise man lifetime)
 - show the thread's start and end time
+- go from PLAY mode to DEBUG mode without recompiling
 
 ### Problems/Bugs
 - user can enter text instead of numbers in the first questions

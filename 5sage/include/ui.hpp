@@ -3,9 +3,12 @@
 #include <vector>
 #include <Windows.h>
 
+#include <chrono>
+
 class UI
 {
 private:
+	//UI display does not need mutex (for std::cout) because it is the only thread printing on the console
 	std::vector<char>	sageState;
 	std::vector<int>	chopstickState;
 
@@ -20,6 +23,7 @@ public:
 
 	void	display();
 
+	void	displayTimer(std::chrono::steady_clock::time_point dinnerStart);
 	void	displaySageState(HANDLE hConsole);
 	void	displayChopstickState(HANDLE hConsole);
 
