@@ -1,6 +1,6 @@
 #pragma once
 
-//#define DEBUG
+#define DEBUG
 
 #include "sage.hpp"
 #include "ui.hpp"
@@ -20,9 +20,14 @@ private:
 	std::vector<std::mutex*>	chopsticksMutex;
 	std::vector<std::thread>	threads;
 
+	std::vector<Sage>			sages;
+	std::vector<std::string>	names;
 	std::vector<int>			chopsticks;
+	UI							ui;
 
 	bool						canEatMore = false;		//can the sages eat more than the target time?
+
+	void nameSages();
 
 	void think(Sage* sage);
 
@@ -34,9 +39,6 @@ private:
 	void dinner();
 
 public:
-	std::vector<Sage>			sages;
-	UI							ui;
-
 	Table();
 	~Table();
 

@@ -22,5 +22,5 @@ public:
 
 	Sage() = default;
 	//name, target chopsticks, action time
-	Sage(std::string n, int sL, int sR, int thinkT, int eatT);
+	Sage(std::string n, int sL, int sR, int thinkS, int eatS);
 };
