@@ -24,7 +24,7 @@
     <ClCompile Include="src\table.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\math.cpp">
+    <ClCompile Include="src\utils.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="src\ui.cpp">
@@ -38,7 +38,7 @@
     <ClInclude Include="include\table.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="include\math.hpp">
+    <ClInclude Include="include\utils.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="include\ui.hpp">

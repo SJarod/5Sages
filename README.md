@@ -13,8 +13,7 @@ To use the program, follow the instructions on the console when it launches.
 	- number of wise men
 	- action time
 - change the display between DEBUG or not
-	- only after recompilation
-	- \#define DEBUG
+	- choose the display mode at start of program
 	- DEBUG mode will show texts while PLAY mode will show a clean UI
 	- in DEBUG mode, each wise man will try eating every 1 second
 	- in PLAY mode, each wise man will try and retry until success
@@ -27,9 +26,7 @@ To use the program, follow the instructions on the console when it launches.
 ###### Next implementation
 - timer for each thread (total duration time) (each wise man lifetime)
 - show the thread's start and end time
-- go from PLAY mode to DEBUG mode without recompiling
 
 ### Problems/Bugs
 - user can enter text instead of numbers in the first questions
-- when there are a lot of wise men, the display will not be fast enough and accurate
-- user has to enter a character to close the window
+- when there are a lot of wise men, the display will not be fast enough and not accurate

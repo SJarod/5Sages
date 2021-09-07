@@ -4,8 +4,10 @@
 
 #include <chrono>
 
-UI::UI(int sageCount)
+UI::UI(int sageCount, bool DEBUG)
 {
+	this->DEBUG = DEBUG;
+
 	for (int i = 0; i < sageCount; ++i)
 	{
 		sageState.push_back('T');

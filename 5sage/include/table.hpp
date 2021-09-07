@@ -1,7 +1,5 @@
 #pragma once
 
-//#define DEBUG
-
 #include "sage.hpp"
 #include "ui.hpp"
 
@@ -42,6 +40,6 @@ public:
 	Table();
 	~Table();
 
-	void setTable();
+	void setTable(bool DEBUG);
 	void readyToEat();
 };
