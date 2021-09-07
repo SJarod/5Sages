@@ -1,15 +1,11 @@
 #include "table.hpp"
 
-#include <thread>
 #include <functional>
-
 #include <iostream>
-
 #include <chrono>
+#include <Windows.h>
 
 #include "utils.hpp"
-
-#include <Windows.h>
 
 Table::Table()
 {
@@ -93,6 +89,7 @@ void Table::nameSages()
 
 void Table::think(Sage* sage)
 {
+	//start of thread
 	auto start = std::chrono::steady_clock::now();
 
 	if (ui.DEBUG)
@@ -236,6 +233,7 @@ void Table::doneEating(Sage* sage)
 		}
 
 		ui.changeSage(sage->stickL, 'D');
+		//end of thread
 	}
 }
 
