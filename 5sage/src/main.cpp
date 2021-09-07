@@ -25,6 +25,8 @@ int main()
 
 	bool debug = yesOrNo("?");
 
+	std::cout << "\nPlease DO NOT enter text when program asks for NUMBERS\n" << std::endl;
+
 	if (debug)
 		std::cout << "number of threads : " << std::thread::hardware_concurrency() << std::endl << std::endl;
 
