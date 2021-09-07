@@ -5,6 +5,22 @@ Jarod Sengkeo
 The program is called 5sage. It is a console program that simulates the dinner of 5 (or more) wise men.
 To use the program, follow the instructions on the console when it launches.
 
+### UI
+The first row shows the state of the wise men :
+T : thinking
+E : eating
+W : waiting
+D : done
+
+  T  T  T  T  T
+
+The second tow shows the state of every chopsticks :
+0 : chopstick available
+1 : chopstick unavailable
+
+0  0  0  0  0
+
+
 ### Features
 ###### Implemented
 - multithreading (for every wise men)
@@ -24,7 +40,6 @@ To use the program, follow the instructions on the console when it launches.
 - display of a timer to help user to count
 
 ###### Next implementation
-- timer for each thread (total duration time) (each wise man lifetime)
 - show the thread's start and end time
 
 ### Problems/Bugs
