@@ -7,7 +7,7 @@
 
 #include <chrono>
 
-#include "math.hpp"
+#include "utils.hpp"
 
 #include <Windows.h>
 
@@ -35,19 +35,7 @@ Table::Table()
 	std::cout << "Pendant combien de temps (en secondes) les sages pensent/mangent-ils au maximum? ";
 	std::cin >> ACTIONTIMEMAX;
 
-	std::cout << "Les sages peuvent-ils manger plus que le temps voulu [o/n]? ";
-	std::string c;
-	std::cin >> c;
-	if (c[0] == 'o' || c[0] == 'y')
-	{
-		std::cout << "oui" << std::endl;
-		canEatMore = true;
-	}
-	else
-	{
-		std::cout << "non" << std::endl;
-		canEatMore = false;
-	}
+	canEatMore = yesOrNo("Les sages peuvent-ils manger plus que le temps voulu?");
 
 	std::cout << std::endl;
 }
@@ -60,7 +48,7 @@ Table::~Table()
 	chopsticksMutex.clear();
 }
 
-void Table::setTable()
+void Table::setTable(bool DEBUG)
 {
 	for (unsigned int i = 0; i < SAGECOUNT; ++i)
 	{
@@ -76,7 +64,7 @@ void Table::setTable()
 	}
 
 	threads.push_back(std::thread()); //+1 for the UI
-	ui = UI(SAGECOUNT);
+	ui = UI(SAGECOUNT, DEBUG);
 }
 
 void Table::nameSages()
@@ -107,11 +95,12 @@ void Table::think(Sage* sage)
 {
 	auto start = std::chrono::steady_clock::now();
 
-#ifdef DEBUG
-	coutMutex.lock();
-		std::cout << sage->name << " is thinking during " << sage->thinkSpeed << "s" << std::endl;
-	coutMutex.unlock();
-#endif
+	if (ui.DEBUG)
+	{
+		coutMutex.lock();
+			std::cout << sage->name << " is thinking during " << sage->thinkSpeed << "s" << std::endl;
+		coutMutex.unlock();
+	}
 
 	ui.changeSage(sage->stickL, 'T');
 
@@ -120,11 +109,12 @@ void Table::think(Sage* sage)
 	auto end = std::chrono::steady_clock::now();
 	sage->tinkingTime += std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.f;
 
-#ifdef DEBUG
-	coutMutex.lock();
-		std::cout << std::endl << sage->name << " wants to eat" << std::endl;
-	coutMutex.unlock();
-#endif
+	if (ui.DEBUG)
+	{
+		coutMutex.lock();
+			std::cout << std::endl << sage->name << " wants to eat" << std::endl;
+		coutMutex.unlock();
+	}
 
 	auto startWaiting = std::chrono::steady_clock::now();
 
@@ -171,13 +161,14 @@ bool Table::canEat(Sage* sage)
 
 		ui.changeSage(sage->stickL, 'W');
 
-#ifdef DEBUG
-		coutMutex.lock();
-		std::cout << msg << std::endl;
-		coutMutex.unlock();
+		if (ui.DEBUG)
+		{
+			coutMutex.lock();
+			std::cout << msg << std::endl;
+			coutMutex.unlock();
 
-		std::this_thread::sleep_for(std::chrono::seconds(1));
-#endif
+			std::this_thread::sleep_for(std::chrono::seconds(1));
+		}
 
 		return false;
 	}
@@ -193,18 +184,20 @@ void Table::eat(Sage* sage)
 
 	ui.changeSage(sage->stickL, 'E');
 
-#ifdef DEBUG
-	coutMutex.lock();
-		std::cout << sage->name << " is eating with chopsticks " << sage->stickL <<
-			" and " << sage->stickR << " during " << sage->eatSpeed << "s" << std::endl;
+	if (ui.DEBUG)
+	{
+		coutMutex.lock();
+			std::cout << sage->name << " is eating with chopsticks " << sage->stickL <<
+				" and " << sage->stickR << " during " << sage->eatSpeed << "s" << std::endl;
 
-		for (unsigned int i = 0; i < SAGECOUNT; ++i)
-		{
-			std::cout << chopsticks[i] << "  ";
-		}
-		std::cout << std::endl;
-	coutMutex.unlock();
-#endif
+			std::cout << "chopsticks : ";
+			for (unsigned int i = 0; i < SAGECOUNT; ++i)
+			{
+				std::cout << chopsticks[i] << "  ";
+			}
+			std::cout << std::endl;
+		coutMutex.unlock();
+	}
 
 	std::this_thread::sleep_for(std::chrono::seconds(sage->eatSpeed));
 
@@ -227,7 +220,7 @@ void Table::doneEating(Sage* sage)
 		if (!canEatMore)
 		{
 			//cannot eat more than the eating target time
-			if ((int)sage->eatingTime + sage->eatSpeed > (int)EATINGTIME)
+			if (sage->eatingTime + (float)sage->eatSpeed > EATINGTIME)
 				sage->eatSpeed = (int)EATINGTIME - (int)sage->eatingTime;
 		}
 
@@ -235,11 +228,12 @@ void Table::doneEating(Sage* sage)
 	}
 	else
 	{
-#ifdef DEBUG
-		coutMutex.lock();
-		std::cout << sage->name << " is done eating -------------------------------------" << std::endl;
-		coutMutex.unlock();
-#endif
+		if (ui.DEBUG)
+		{
+			coutMutex.lock();
+				std::cout << sage->name << " is done eating -------------------------------------" << std::endl;
+			coutMutex.unlock();
+		}
 
 		ui.changeSage(sage->stickL, 'D');
 	}
@@ -249,32 +243,33 @@ void Table::readyToEat()
 {
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
-	std::cout << "Voici les regles : " << std::endl;
-	SetConsoleTextAttribute(hConsole, 9);	std::cout << "T";
-	SetConsoleTextAttribute(hConsole, 7);
-	std::cout << " : thinking" << std::endl;
-	SetConsoleTextAttribute(hConsole, 12);	std::cout << "E";
-	SetConsoleTextAttribute(hConsole, 7);
-	std::cout << " : eating" << std::endl;
-	SetConsoleTextAttribute(hConsole, 10);	std::cout << "W";
-	SetConsoleTextAttribute(hConsole, 7);
-	std::cout << " : waiting" << std::endl;
-	SetConsoleTextAttribute(hConsole, 15);	std::cout << "D";
-	SetConsoleTextAttribute(hConsole, 7);
-	std::cout << " : done" << std::endl << std::endl;
-	SetConsoleTextAttribute(hConsole, 15);	std::cout << "0";
-	SetConsoleTextAttribute(hConsole, 7);
-	std::cout << " : chopstick available" << std::endl;
-	SetConsoleTextAttribute(hConsole, 12);	std::cout << "1";
-	SetConsoleTextAttribute(hConsole, 7);
-	std::cout << " : chopstick unavailable" << std::endl << std::endl;
-
-	std::string c = " ";
-	while (!(c[0] == 'o' || c[0] == 'y'))
+	if (!ui.DEBUG)
 	{
-		std::cout << "Le dinner peut-il commencer [o/n]? ";
+		std::cout << "Voici les regles : " << std::endl;
+		SetConsoleTextAttribute(hConsole, 9);	std::cout << "T";
+		SetConsoleTextAttribute(hConsole, 7);
+		std::cout << " : thinking" << std::endl;
+		SetConsoleTextAttribute(hConsole, 12);	std::cout << "E";
+		SetConsoleTextAttribute(hConsole, 7);
+		std::cout << " : eating" << std::endl;
+		SetConsoleTextAttribute(hConsole, 10);	std::cout << "W";
+		SetConsoleTextAttribute(hConsole, 7);
+		std::cout << " : waiting" << std::endl;
+		SetConsoleTextAttribute(hConsole, 15);	std::cout << "D";
+		SetConsoleTextAttribute(hConsole, 7);
+		std::cout << " : done" << std::endl << std::endl;
+		SetConsoleTextAttribute(hConsole, 15);	std::cout << "0";
+		SetConsoleTextAttribute(hConsole, 7);
+		std::cout << " : chopstick available" << std::endl;
+		SetConsoleTextAttribute(hConsole, 12);	std::cout << "1";
+		SetConsoleTextAttribute(hConsole, 7);
+		std::cout << " : chopstick unavailable" << std::endl << std::endl;
+	}
 
-		std::cin >> c;
+	bool commence = false;
+	while (!commence)
+	{
+		commence = yesOrNo("Le dinner peut-il commencer?");
 	}
 
 	dinner();
@@ -289,18 +284,20 @@ void Table::dinner()
 		threads[i] = std::thread{ std::bind(&Table::think, this, &this->sages[i]) };
 
 	//launching thread for ui (only if not in debug mode)
-#ifndef DEBUG
-	threads[SAGECOUNT] = std::thread{ std::bind(&UI::display, &this->ui) };
-#endif
+	if (!ui.DEBUG)
+		threads[SAGECOUNT] = std::thread{ std::bind(&UI::display, &this->ui) };
 
 	//joining threads
-#ifdef DEBUG
-	for (unsigned int i = 0; i < SAGECOUNT; ++i)
-		threads[i].join();
-#else
-	for (unsigned int i = 0; i < SAGECOUNT + 1; ++i)	//+1 for the ui
-		threads[i].join();
-#endif
+	if (ui.DEBUG)
+	{
+		for (unsigned int i = 0; i < SAGECOUNT; ++i)
+			threads[i].join();
+	}
+	else
+	{
+		for (unsigned int i = 0; i < SAGECOUNT + 1; ++i)	//+1 for the ui
+			threads[i].join();
+	}
 
 	for (unsigned int i = 0; i < SAGECOUNT; ++i)
 	{
@@ -309,7 +306,10 @@ void Table::dinner()
 			", waiting time : " << sages[i].waitingTime << "s" << std::endl;;
 	}
 
-	std::cout << std::endl << "Enter any character to close the window...";
-	char c;
-	std::cin >> c;
+	std::cout << std::endl;
+	bool quit = false;
+	while (!quit)
+	{
+		quit = yesOrNo("Do you want to quit the application?");
+	}
 }

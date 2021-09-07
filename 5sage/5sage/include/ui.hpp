@@ -15,8 +15,12 @@ private:
 	bool				finished = false;
 
 public:
+	//if program is in DEBUG mode, UI display will not be launched
+	//display will be managed by Table
+	bool				DEBUG = false;
+
 	UI() = default;
-	UI(int sageCount);
+	UI(int sageCount, bool DEBUG);
 
 	void	changeSage(const int index, const char state);
 	void	changeChopstick(const int index, const int state);
